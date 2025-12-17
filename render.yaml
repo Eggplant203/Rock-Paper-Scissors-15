@@ -4,8 +4,8 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: cd server && npm install && cd .. && npm install && npm run build:server
-    startCommand: cd server && node dist/index.js
+    buildCommand: npm install && cd server && npm install && cd .. && npm run build:server
+    startCommand: node server/dist/index.js
     envVars:
       - key: PORT
         value: 3001
