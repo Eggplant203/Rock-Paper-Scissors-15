@@ -1,0 +1,38 @@
+.exit-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff5757 0%, #cc4444 100%);
+  border: none;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 87, 87, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(255, 87, 87, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 768px) {
+  .exit-button {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    top: 16px;
+    left: 16px;
+  }
+}

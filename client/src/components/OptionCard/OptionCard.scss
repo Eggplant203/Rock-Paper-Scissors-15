@@ -1,0 +1,108 @@
+.option-card {
+  position: relative;
+  width: 120px;
+  height: 150px;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  user-select: none;
+
+  // Base color
+  &.blue {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  &.pink {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  &:hover:not(.disabled) {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  &.selected {
+    transform: scale(1.05);
+    
+    &.blue {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      box-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
+    }
+
+    &.pink {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      box-shadow: 0 0 20px rgba(245, 87, 108, 0.6);
+    }
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+  }
+
+  .option-image-wrapper {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 5px;
+  }
+
+  .option-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .option-name {
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .selected-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    background: #00ff88;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 4px 8px rgba(0, 255, 136, 0.3);
+  }
+}
+
+@media (max-width: 768px) {
+  .option-card {
+    width: 90px;
+    height: 120px;
+    padding: 8px;
+
+    .option-image-wrapper {
+      width: 60px;
+      height: 60px;
+    }
+
+    .option-name {
+      font-size: 12px;
+    }
+  }
+}

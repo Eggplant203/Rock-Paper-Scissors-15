@@ -1,0 +1,194 @@
+.lobby-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--app-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+  padding: 20px;
+
+  .lobby-card {
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+    .title {
+      font-size: 42px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+
+    .nickname-section {
+      margin-bottom: 32px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .nickname-input-group {
+        display: flex;
+        gap: 8px;
+
+        input {
+          flex: 1;
+          padding: 12px 16px;
+          border: 2px solid #e0e0e0;
+          border-radius: 12px;
+          font-size: 16px;
+          transition: all 0.3s;
+
+          &:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          }
+        }
+
+        .random-btn {
+          padding: 12px 16px;
+          background: #f0f0f0;
+          border: none;
+          border-radius: 12px;
+          font-size: 20px;
+          cursor: pointer;
+          transition: all 0.3s;
+
+          &:hover {
+            background: #e0e0e0;
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .btn {
+        padding: 16px 32px;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        &.btn-primary {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+          &:hover:not(:disabled) {
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+          }
+        }
+
+        &.btn-secondary {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+
+          &:hover:not(:disabled) {
+            box-shadow: 0 6px 16px rgba(245, 87, 108, 0.5);
+          }
+        }
+      }
+
+      .divider {
+        text-align: center;
+        color: #999;
+        font-weight: 600;
+        position: relative;
+        margin: 8px 0;
+
+        &::before,
+        &::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          width: 40%;
+          height: 1px;
+          background: #e0e0e0;
+        }
+
+        &::before {
+          left: 0;
+        }
+
+        &::after {
+          right: 0;
+        }
+      }
+
+      .join-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .room-code-input {
+          padding: 12px 16px;
+          border: 2px solid #e0e0e0;
+          border-radius: 12px;
+          font-size: 18px;
+          font-weight: 700;
+          text-align: center;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          transition: all 0.3s;
+
+          &:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+          }
+        }
+      }
+    }
+
+    .error-message {
+      margin-top: 20px;
+      padding: 12px;
+      background: #fee;
+      color: #c00;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .lobby-container .lobby-card {
+    padding: 32px 24px;
+
+    .title {
+      font-size: 32px;
+    }
+  }
+}

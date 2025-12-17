@@ -1,0 +1,30 @@
+.countdown-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+
+  .countdown-number {
+    font-size: 200px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.5),
+      0 0 40px rgba(102, 126, 234, 0.8),
+      0 0 60px rgba(102, 126, 234, 0.6);
+    line-height: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .countdown-container .countdown-number {
+    font-size: 120px;
+  }
+}

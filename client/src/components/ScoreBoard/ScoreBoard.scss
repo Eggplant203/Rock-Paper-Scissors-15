@@ -1,0 +1,115 @@
+.scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+  margin-bottom: 30px;
+
+  .score-card {
+    border-radius: 16px;
+    padding: 24px 32px;
+    min-width: 200px;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    color: white;
+
+    &.blue {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    &.pink {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    &.waiting {
+      background: linear-gradient(135deg, #a8a8a8 0%, #7a7a7a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 150px;
+    }
+
+    .score-header {
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 8px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      display: inline-block;
+
+      &.you {
+        background: white;
+        color: #2ed573;
+        text-shadow: none;
+      }
+
+      &.opponent-label {
+        background: white;
+        color: #ff4757;
+        text-shadow: none;
+      }
+    }
+
+    .player-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .score-value {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .streak-badge {
+      margin-top: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-block;
+      clear: both;
+    }
+
+    .waiting-text {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+  }
+
+  .vs-divider {
+    font-size: 32px;
+    font-weight: 900;
+    color: #333;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .scoreboard {
+    flex-direction: column;
+    gap: 20px;
+
+    .score-card {
+      min-width: 160px;
+      padding: 20px 24px;
+
+      .score-value {
+        font-size: 36px;
+      }
+    }
+
+    .vs-divider {
+      font-size: 24px;
+      transform: rotate(90deg);
+    }
+  }
+}
