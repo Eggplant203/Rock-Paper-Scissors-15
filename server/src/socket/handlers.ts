@@ -16,6 +16,14 @@ export function setupSocketHandlers(
 
     // Create room
     socket.on('create_room', (nickname, callback) => {
+      // Check if socket is already in a room and remove it first
+      const existingRoom = roomManager.findRoomBySocketId(socket.id);
+      if (existingRoom) {
+        socket.leave(existingRoom.roomId);
+        roomManager.removePlayerFromRoom(socket.id);
+        console.log(`${socket.id} left previous room: ${existingRoom.roomId}`);
+      }
+      
       const roomId = roomManager.generateRoomId();
       
       const player: Player = {
@@ -42,6 +50,20 @@ export function setupSocketHandlers(
 
     // Join room
     socket.on('join_room', ({ roomId, nickname }, callback) => {
+      // Check if socket is already in a room and remove it first
+      const currentRoom = roomManager.findRoomBySocketId(socket.id);
+      if (currentRoom) {
+        socket.leave(currentRoom.roomId);
+        const leftRoom = roomManager.removePlayerFromRoom(socket.id);
+        console.log(`${socket.id} left previous room: ${currentRoom.roomId}`);
+        
+        // Notify remaining players in the old room
+        if (leftRoom && leftRoom.players.length > 0) {
+          io.to(leftRoom.roomId).emit('opponent_left');
+          io.to(leftRoom.roomId).emit('player_update', leftRoom.players);
+        }
+      }
+      
       const existingRoom = roomManager.getRoom(roomId);
       
       if (!existingRoom) {

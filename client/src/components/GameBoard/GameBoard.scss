@@ -237,12 +237,45 @@
       }
     }
 
-      .waiting-opponent-ready {
+      .ready-status {
         margin-top: 20px;
-        font-size: 16px;
-        color: #666;
-        font-weight: 600;
-        animation: pulse 1.5s ease-in-out infinite;
+        min-height: 40px;
+        
+        .waiting-opponent-ready,
+        .opponent-ready-status,
+        .both-ready-status {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-size: 18px;
+          font-weight: 600;
+          padding: 12px 24px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.95);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          
+          .status-icon {
+            font-size: 20px;
+          }
+        }
+
+        .waiting-opponent-ready {
+          color: #ff9800;
+          animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .opponent-ready-status {
+          color: #00cc66;
+          animation: bounce 0.5s ease;
+        }
+
+        .both-ready-status {
+          color: #667eea;
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+          border: 2px solid #667eea;
+          animation: pulse 1s ease-in-out infinite;
+        }
       }
     }
   }
@@ -254,6 +287,15 @@
   }
   50% {
     opacity: 0.6;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 

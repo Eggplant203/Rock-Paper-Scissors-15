@@ -454,17 +454,22 @@ describe('RoomManager', () => {
 
       const roomId = 'TEST17';
       roomManager.createRoom(roomId, player1);
-      roomManager.joinRoom(roomId, player2);
+      const room = roomManager.joinRoom(roomId, player2);
+      
+      // Simulate handler incrementing roundNumber before reset
+      if (room) {
+        room.roundNumber += 1;
+      }
       
       roomManager.resetRoundSelections(roomId);
       
-      const room = roomManager.getRoom(roomId);
-      expect(room?.players[0].selectedOption).toBeNull();
-      expect(room?.players[0].isConfirmed).toBe(false);
-      expect(room?.players[1].selectedOption).toBeNull();
-      expect(room?.players[1].isConfirmed).toBe(false);
-      expect(room?.gameState).toBe('SELECTING');
-      expect(room?.roundNumber).toBe(2);
+      const updatedRoom = roomManager.getRoom(roomId);
+      expect(updatedRoom?.players[0].selectedOption).toBeNull();
+      expect(updatedRoom?.players[0].isConfirmed).toBe(false);
+      expect(updatedRoom?.players[1].selectedOption).toBeNull();
+      expect(updatedRoom?.players[1].isConfirmed).toBe(false);
+      expect(updatedRoom?.gameState).toBe('SELECTING');
+      expect(updatedRoom?.roundNumber).toBe(2);
     });
   });
 
@@ -490,6 +495,247 @@ describe('RoomManager', () => {
     test('should return null for non-existent socket ID', () => {
       const foundRoom = roomManager.findRoomBySocketId('nonexistent');
       expect(foundRoom).toBeNull();
+    });
+  });
+
+  describe('Room switching scenarios', () => {
+    test('should allow player to leave room and join new room successfully', () => {
+      // Create first room with player1
+      const player1: Player = {
+        socketId: 'socket1',
+        nickname: 'Player1',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const roomId1 = 'ROOM01';
+      roomManager.createRoom(roomId1, player1);
+
+      // Player2 joins first room
+      const player2: Player = {
+        socketId: 'socket2',
+        nickname: 'Player2',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      roomManager.joinRoom(roomId1, player2);
+
+      // Player2 selects and confirms
+      roomManager.updatePlayerSelection('socket2', 'Rock');
+      roomManager.confirmPlayerSelection('socket2');
+
+      // Player2 leaves room
+      roomManager.removePlayerFromRoom('socket2');
+
+      // Verify player2 is no longer in first room
+      const room1AfterLeave = roomManager.getRoom(roomId1);
+      expect(room1AfterLeave?.players.length).toBe(1);
+      expect(room1AfterLeave?.players[0].socketId).toBe('socket1');
+
+      // Player2 creates new room
+      const roomId2 = 'ROOM02';
+      const player2NewRoom: Player = {
+        socketId: 'socket2',
+        nickname: 'Player2',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const newRoom = roomManager.createRoom(roomId2, player2NewRoom);
+
+      // Verify player2 is in new room with clean state
+      expect(newRoom).not.toBeNull();
+      expect(newRoom.players.length).toBe(1);
+      expect(newRoom.players[0].socketId).toBe('socket2');
+      expect(newRoom.players[0].selectedOption).toBeNull();
+      expect(newRoom.players[0].isConfirmed).toBe(false);
+    });
+
+    test('should handle player leaving and joining different room with fresh state', () => {
+      // Player creates room1
+      const player: Player = {
+        socketId: 'socket1',
+        nickname: 'TestPlayer',
+        score: 5,
+        winStreak: 3,
+        selectedOption: 'Rock',
+        isConfirmed: true,
+      };
+
+      const roomId1 = 'ROOM03';
+      roomManager.createRoom(roomId1, player);
+
+      // Player leaves room1
+      roomManager.removePlayerFromRoom('socket1');
+
+      // Create room2
+      const player3: Player = {
+        socketId: 'socket3',
+        nickname: 'Player3',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const roomId2 = 'ROOM04';
+      roomManager.createRoom(roomId2, player3);
+
+      // Player joins room2 with fresh state
+      const playerFresh: Player = {
+        socketId: 'socket1',
+        nickname: 'TestPlayer',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const room2 = roomManager.joinRoom(roomId2, playerFresh);
+
+      // Verify player joined with clean state
+      expect(room2).not.toBeNull();
+      expect(room2?.players.length).toBe(2);
+      const joinedPlayer = room2?.players.find(p => p.socketId === 'socket1');
+      expect(joinedPlayer?.selectedOption).toBeNull();
+      expect(joinedPlayer?.isConfirmed).toBe(false);
+      expect(joinedPlayer?.score).toBe(0);
+      expect(joinedPlayer?.winStreak).toBe(0);
+    });
+
+    test('should allow player to select and confirm in new room after leaving previous room', () => {
+      // Player1 creates room1
+      const player1: Player = {
+        socketId: 'socket1',
+        nickname: 'Player1',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const roomId1 = 'ROOM05';
+      roomManager.createRoom(roomId1, player1);
+
+      // Player2 joins room1
+      const player2: Player = {
+        socketId: 'socket2',
+        nickname: 'Player2',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      roomManager.joinRoom(roomId1, player2);
+
+      // Player2 selects and confirms in room1
+      roomManager.updatePlayerSelection('socket2', 'Rock');
+      roomManager.confirmPlayerSelection('socket2');
+
+      // Verify selection in room1
+      let room1 = roomManager.getRoom(roomId1);
+      let player2InRoom1 = room1?.players.find(p => p.socketId === 'socket2');
+      expect(player2InRoom1?.selectedOption).toBe('Rock');
+      expect(player2InRoom1?.isConfirmed).toBe(true);
+
+      // Player2 leaves room1
+      roomManager.removePlayerFromRoom('socket2');
+
+      // Player3 creates room2
+      const player3: Player = {
+        socketId: 'socket3',
+        nickname: 'Player3',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const roomId2 = 'ROOM06';
+      roomManager.createRoom(roomId2, player3);
+
+      // Player2 joins room2 with fresh state
+      const player2Fresh: Player = {
+        socketId: 'socket2',
+        nickname: 'Player2',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+
+      const room2 = roomManager.joinRoom(roomId2, player2Fresh);
+
+      // Player2 should be able to select and confirm in room2
+      const selectionResult = roomManager.updatePlayerSelection('socket2', 'Paper');
+      expect(selectionResult).toBe(true);
+
+      const confirmResult = roomManager.confirmPlayerSelection('socket2');
+      expect(confirmResult).toBe(true);
+
+      // Verify player2 state in room2
+      const room2Updated = roomManager.getRoom(roomId2);
+      const player2InRoom2 = room2Updated?.players.find(p => p.socketId === 'socket2');
+      expect(player2InRoom2?.selectedOption).toBe('Paper');
+      expect(player2InRoom2?.isConfirmed).toBe(true);
+
+      // Verify room2 is in correct state
+      expect(room2Updated?.gameState).toBe('SELECTING');
+    });
+
+    test('should handle multiple room switches without state persistence', () => {
+      // Create and leave room1
+      const roomId1 = 'ROOM07';
+      const player1: Player = {
+        socketId: 'socket1',
+        nickname: 'Player1',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+      roomManager.createRoom(roomId1, player1);
+      roomManager.updatePlayerSelection('socket1', 'Rock');
+      roomManager.removePlayerFromRoom('socket1');
+
+      // Create and leave room2
+      const roomId2 = 'ROOM08';
+      const player2: Player = {
+        socketId: 'socket1',
+        nickname: 'Player1',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+      roomManager.createRoom(roomId2, player2);
+      roomManager.updatePlayerSelection('socket1', 'Paper');
+      roomManager.removePlayerFromRoom('socket1');
+
+      // Create room3 with fresh player object
+      const roomId3 = 'ROOM09';
+      const player3: Player = {
+        socketId: 'socket1',
+        nickname: 'Player1',
+        score: 0,
+        winStreak: 0,
+        selectedOption: null,
+        isConfirmed: false,
+      };
+      roomManager.createRoom(roomId3, player3);
+
+      // Verify clean state in room3
+      const room3 = roomManager.getRoom(roomId3);
+      expect(room3?.players[0].selectedOption).toBeNull();
+      expect(room3?.players[0].isConfirmed).toBe(false);
     });
   });
 });

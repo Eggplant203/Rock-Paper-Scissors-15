@@ -228,11 +228,33 @@ export const GameBoard: React.FC = () => {
               {currentPlayer?.isReadyForNextRound ? '✓ Ready!' : 'Ready for Next Round'}
             </motion.button>
 
-            {currentPlayer?.isReadyForNextRound && !opponent?.isReadyForNextRound && (
-              <div className="waiting-opponent-ready">
-                Waiting for opponent...
-              </div>
-            )}
+            <motion.div
+              className="ready-status"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              {currentPlayer?.isReadyForNextRound && !opponent?.isReadyForNextRound && (
+                <div className="waiting-opponent-ready">
+                  <span className="status-icon">⏳</span>
+                  Waiting for opponent...
+                </div>
+              )}
+              
+              {!currentPlayer?.isReadyForNextRound && opponent?.isReadyForNextRound && (
+                <div className="opponent-ready-status">
+                  <span className="status-icon">✓</span>
+                  Opponent is ready!
+                </div>
+              )}
+
+              {currentPlayer?.isReadyForNextRound && opponent?.isReadyForNextRound && (
+                <div className="both-ready-status">
+                  <span className="status-icon">✓✓</span>
+                  Both ready! Starting next round...
+                </div>
+              )}
+            </motion.div>
           </div>
         </motion.div>
       )}
