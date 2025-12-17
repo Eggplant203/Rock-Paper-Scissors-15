@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rps15-server
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: CLIENT_URL
+        sync: false
