@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { STICKER_CATEGORIES } from '../../utils/stickers';
 import { audioManager } from '../../utils/audio';
@@ -12,16 +12,24 @@ interface StickerPickerProps {
 
 export const StickerPicker: React.FC<StickerPickerProps> = ({ onStickerSelect, isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState(0);
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   const handleStickerClick = (stickerPath: string) => {
-    audioManager.play('click', 0.3);
+    audioManager.play('send', 0.4);
     onStickerSelect(stickerPath);
-    onClose();
+    onClose(); // Close immediately
   };
 
   const handleTabChange = (index: number) => {
     audioManager.play('click', 0.2);
     setActiveTab(index);
+  };
+
+  const handleTabsWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (tabsRef.current) {
+      e.preventDefault();
+      tabsRef.current.scrollLeft += e.deltaY;
+    }
   };
 
   if (!isOpen) return null;
@@ -41,7 +49,11 @@ export const StickerPicker: React.FC<StickerPickerProps> = ({ onStickerSelect, i
           <button className="close-button" onClick={onClose}>✕</button>
         </div>
 
-        <div className="sticker-tabs">
+        <div 
+          className="sticker-tabs" 
+          ref={tabsRef}
+          onWheel={handleTabsWheel}
+        >
           {STICKER_CATEGORIES.map((category, index) => (
             <button
               key={category.name}

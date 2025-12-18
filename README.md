@@ -2,13 +2,21 @@
 
 Real-time multiplayer Rock-Paper-Scissors with **15 options**! Challenge your friends in this extended version of the classic game.
 
+## 🌐 Play Online
+
+**Live Demo:** https://rock-paper-scissors-15.netlify.app/
+
+> **Note:** Backend uses free tier hosting. If you experience delays when creating/joining rooms, please wait 1-2 minutes for the server to wake up from sleep mode.
+
 ## ✨ Features
 
 - 🎲 15 unique options (Rock, Gun, Lightning, Devil, Dragon, Water, Air, Paper, Sponge, Wolf, Tree, Human, Snake, Scissors, Fire)
 - 👥 Real-time 2-player gameplay
 - 🏠 Room-based matchmaking with 6-digit codes
 - 📊 Win streak scoring system (1pt → 2pts @ 3 streak → 3pts @ 5 streak)
-- 🎨 Smooth animations and sound effects
+- 💬 Sticker chat system with 5 categories (58+ stickers)
+- 🎵 Background music and sound effects
+- 🎨 Smooth animations with Framer Motion
 - 📱 Mobile-friendly responsive design
 - ⚡ Built with TypeScript, React, and Socket.IO
 
@@ -30,9 +38,11 @@ Each of the 15 options:
 
 ## 🛠️ Tech Stack
 
-**Frontend:** React 18 + TypeScript + Vite + Socket.IO + Framer Motion + SCSS  
-**Backend:** Node.js + Express + Socket.IO  
-**Testing:** Jest + Vitest (88 tests passing)
+**Frontend:** React 18 + TypeScript + Vite + Socket.IO Client + Framer Motion + SCSS  
+**Backend:** Node.js + Express + Socket.IO + TypeScript  
+**State Management:** Zustand  
+**Testing:** Jest + Vitest (29+ tests passing)  
+**Deployment:** Netlify (Frontend) + Render/Railway (Backend)
 
 ## 🚀 Quick Start
 
@@ -72,11 +82,12 @@ npm run dev
 
 Opens on http://localhost:5173 (frontend) and http://localhost:3001 (backend)
 
-### How to Play
-
-1. Open http://localhost:5173 in two browser tabs
-2. Player 1: Create room → Copy code
+### How to Play (or use the live demo)
+2. Player 1: Create room → Copy room code
 3. Player 2: Join with code
+4. Select weapon → Confirm → Watch countdown → See result!
+5. **Chat:** Click emoji button to send stickers to opponent
+6. Use **?** button for rules, **×** button to exit room
 4. Select weapon → Confirm → Watch countdown → See result!
 5. Use **?** button for rules, **×** button to exit
 

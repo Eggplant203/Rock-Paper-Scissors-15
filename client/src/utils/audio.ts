@@ -122,6 +122,8 @@ export function initializeSounds() {
   audioManager.loadSound('lose', '/assets/sounds/lose.wav');
   audioManager.loadSound('draw', '/assets/sounds/draw.wav');
   audioManager.loadSound('logout', '/assets/sounds/logout.wav');
+  audioManager.loadSound('send', '/assets/sounds/send.wav');
+  audioManager.loadSound('receive', '/assets/sounds/receive.wav');
   
   // Background music (with loop enabled)
   audioManager.loadSound('background_menu', '/assets/sounds/background_menu.wav', true);

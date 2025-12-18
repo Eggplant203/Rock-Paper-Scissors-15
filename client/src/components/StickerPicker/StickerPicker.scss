@@ -10,7 +10,7 @@
 
 .sticker-picker {
   position: fixed;
-  bottom: 90px;
+  bottom: 80px;
   right: 20px;
   width: 380px;
   max-height: 420px;
@@ -60,13 +60,15 @@
   .sticker-tabs {
     display: flex;
     gap: 8px;
-    padding: 12px 16px;
+    padding: 16px;
     overflow-x: auto;
+    overflow-y: visible;
     border-bottom: 1px solid #e0e0e0;
     background: #f8f8f8;
+    min-height: 80px;
 
     &::-webkit-scrollbar {
-      height: 6px;
+      height: 8px;
     }
 
     &::-webkit-scrollbar-track {
@@ -79,17 +81,21 @@
     }
 
     .tab-button {
-      padding: 8px 16px;
+      padding: 10px 16px;
       background: white;
       border: 2px solid #e0e0e0;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #666;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
       flex-shrink: 0;
+      line-height: 1.4;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
 
       &:hover {
         border-color: #667eea;

@@ -3,6 +3,21 @@
   background: var(--app-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
   padding: 20px;
 
+  .sent-notification {
+    position: fixed;
+    bottom: 100px;
+    right: 10px;
+    background: linear-gradient(135deg, #00cc66 0%, #00aa55 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 997;
+    box-shadow: 0 4px 16px rgba(0, 204, 102, 0.4);
+    pointer-events: none;
+  }
+
   .round-indicator {
     text-align: center;
     color: white;

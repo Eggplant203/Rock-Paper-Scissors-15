@@ -6,28 +6,30 @@ interface StickerBubbleProps {
   stickerPath: string | null;
   senderNickname: string;
   onClose: () => void;
-  autoCloseDelay?: number;
 }
 
 export const StickerBubble: React.FC<StickerBubbleProps> = ({ 
   stickerPath, 
   senderNickname,
-  onClose,
-  autoCloseDelay = 5000
+  onClose 
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (stickerPath) {
       setIsVisible(true);
+      
+      // Auto hide after 5 seconds
       const timer = setTimeout(() => {
         setIsVisible(false);
-        setTimeout(onClose, 300); // Wait for animation to finish
-      }, autoCloseDelay);
+        setTimeout(onClose, 300); // Wait for animation to complete
+      }, 5000);
 
       return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
     }
-  }, [stickerPath, autoCloseDelay, onClose]);
+  }, [stickerPath, onClose]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -41,27 +43,32 @@ export const StickerBubble: React.FC<StickerBubbleProps> = ({
       {isVisible && (
         <motion.div
           className="sticker-bubble"
-          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          initial={{ opacity: 0, scale: 0.5, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 20 }}
-          transition={{ duration: 0.3, ease: 'backOut' }}
+          exit={{ opacity: 0, scale: 0.5, y: 20 }}
+          transition={{ 
+            type: 'spring',
+            stiffness: 500,
+            damping: 25
+          }}
         >
           <button 
-            className="bubble-close"
+            className="sticker-bubble-close"
             onClick={handleClose}
             aria-label="Close"
           >
             ✕
           </button>
-          <div className="bubble-content">
-            <div className="bubble-sender">{senderNickname}</div>
+          <div className="sticker-bubble-sender">{senderNickname}</div>
+          <div className="sticker-bubble-content">
             <img 
               src={stickerPath} 
-              alt="Received sticker"
-              className="bubble-sticker"
+              alt="Sticker from opponent"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
             />
           </div>
-          <div className="bubble-tail" />
         </motion.div>
       )}
     </AnimatePresence>

@@ -30,16 +30,20 @@ export const GameBoard: React.FC = () => {
   } = useGameStore();
 
   const [isStickerPickerOpen, setIsStickerPickerOpen] = useState(false);
-  const [receivedSticker, setReceivedSticker] = useState<{ path: string; sender: string } | null>(null);
+  const [opponentSticker, setOpponentSticker] = useState<{ path: string; sender: string } | null>(null);
+  const [showSentNotification, setShowSentNotification] = useState(false);
 
   useEffect(() => {
     const socket = socketService.getSocket();
     if (!socket) return;
 
     const handleStickerMessage = (message: StickerMessage) => {
-      // Only show stickers from opponent, not from self
+      // Only show sticker from opponent, not own stickers
       if (message.senderSocketId !== currentPlayer?.socketId) {
-        setReceivedSticker({
+        // Play receive sound (always plays, even when tab is hidden)
+        audioManager.play('receive', 0.5);
+        
+        setOpponentSticker({
           path: message.stickerPath,
           sender: message.senderNickname
         });
@@ -57,6 +61,12 @@ export const GameBoard: React.FC = () => {
     const socket = socketService.getSocket();
     if (socket) {
       socket.emit('send_sticker', stickerPath);
+      
+      // Show sent notification
+      setShowSentNotification(true);
+      setTimeout(() => {
+        setShowSentNotification(false);
+      }, 800);
     }
   };
 
@@ -113,6 +123,20 @@ export const GameBoard: React.FC = () => {
       <ChatButton onClick={() => setIsStickerPickerOpen(true)} />
       
       <AnimatePresence>
+        {showSentNotification && (
+          <motion.div
+            className="sent-notification"
+            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+          >
+            ✓ Sent!
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {isStickerPickerOpen && (
           <StickerPicker
             isOpen={isStickerPickerOpen}
@@ -123,10 +147,9 @@ export const GameBoard: React.FC = () => {
       </AnimatePresence>
 
       <StickerBubble
-        stickerPath={receivedSticker?.path || null}
-        senderNickname={receivedSticker?.sender || ''}
-        onClose={() => setReceivedSticker(null)}
-        autoCloseDelay={5000}
+        stickerPath={opponentSticker?.path || null}
+        senderNickname={opponentSticker?.sender || ''}
+        onClose={() => setOpponentSticker(null)}
       />
       
       <ScoreBoard
