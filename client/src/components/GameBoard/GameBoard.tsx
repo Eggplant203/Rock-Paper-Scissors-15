@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socketService } from '../../services/socket';
 import { useGameStore } from '../../store/gameStore';
@@ -8,7 +8,11 @@ import { ScoreBoard } from '../ScoreBoard/ScoreBoard';
 import { Countdown } from '../Countdown/Countdown';
 import { ExitButton } from '../ExitButton/ExitButton';
 import { HelpButton } from '../HelpButton/HelpButton';
+import { ChatButton } from '../ChatButton/ChatButton';
+import { StickerPicker } from '../StickerPicker/StickerPicker';
+import { ChatBox, ChatMessage } from '../ChatBox/ChatBox';
 import { audioManager } from '../../utils/audio';
+import type { StickerMessage } from '../../../../shared/types';
 import './GameBoard.scss';
 
 export const GameBoard: React.FC = () => {
@@ -24,6 +28,38 @@ export const GameBoard: React.FC = () => {
     roundResult,
     roundNumber,
   } = useGameStore();
+
+  const [isStickerPickerOpen, setIsStickerPickerOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+
+  useEffect(() => {
+    const socket = socketService.getSocket();
+    if (!socket) return;
+
+    const handleStickerMessage = (message: StickerMessage) => {
+      const chatMessage: ChatMessage = {
+        id: `${message.timestamp}-${message.senderSocketId}`,
+        senderSocketId: message.senderSocketId,
+        senderNickname: message.senderNickname,
+        stickerPath: message.stickerPath,
+        timestamp: message.timestamp,
+      };
+      setChatMessages(prev => [...prev, chatMessage]);
+    };
+
+    socket.on('sticker_message', handleStickerMessage);
+
+    return () => {
+      socket.off('sticker_message', handleStickerMessage);
+    };
+  }, []);
+
+  const handleSendSticker = (stickerPath: string) => {
+    const socket = socketService.getSocket();
+    if (socket) {
+      socket.emit('send_sticker', stickerPath);
+    }
+  };
 
   const handleSelectOption = (option: typeof GAME_OPTIONS[number]) => {
     if (isConfirmed) return;
@@ -75,6 +111,25 @@ export const GameBoard: React.FC = () => {
     <div className="gameboard-container">
       <ExitButton />
       <HelpButton />
+      <ChatButton onClick={() => setIsStickerPickerOpen(true)} />
+      
+      <AnimatePresence>
+        {isStickerPickerOpen && (
+          <StickerPicker
+            isOpen={isStickerPickerOpen}
+            onClose={() => setIsStickerPickerOpen(false)}
+            onStickerSelect={handleSendSticker}
+          />
+        )}
+      </AnimatePresence>
+
+      {chatMessages.length > 0 && (
+        <ChatBox
+          messages={chatMessages}
+          currentPlayerSocketId={currentPlayer?.socketId}
+        />
+      )}
+      
       <ScoreBoard
         playerName={currentPlayer?.nickname || 'You'}
         playerScore={currentPlayer?.score || 0}
