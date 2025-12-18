@@ -10,7 +10,7 @@ import { ExitButton } from '../ExitButton/ExitButton';
 import { HelpButton } from '../HelpButton/HelpButton';
 import { ChatButton } from '../ChatButton/ChatButton';
 import { StickerPicker } from '../StickerPicker/StickerPicker';
-import { ChatBox, ChatMessage } from '../ChatBox/ChatBox';
+import { StickerBubble } from '../StickerBubble/StickerBubble';
 import { audioManager } from '../../utils/audio';
 import type { StickerMessage } from '../../../../shared/types';
 import './GameBoard.scss';
@@ -30,21 +30,20 @@ export const GameBoard: React.FC = () => {
   } = useGameStore();
 
   const [isStickerPickerOpen, setIsStickerPickerOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [receivedSticker, setReceivedSticker] = useState<{ path: string; sender: string } | null>(null);
 
   useEffect(() => {
     const socket = socketService.getSocket();
     if (!socket) return;
 
     const handleStickerMessage = (message: StickerMessage) => {
-      const chatMessage: ChatMessage = {
-        id: `${message.timestamp}-${message.senderSocketId}`,
-        senderSocketId: message.senderSocketId,
-        senderNickname: message.senderNickname,
-        stickerPath: message.stickerPath,
-        timestamp: message.timestamp,
-      };
-      setChatMessages(prev => [...prev, chatMessage]);
+      // Only show stickers from opponent, not from self
+      if (message.senderSocketId !== currentPlayer?.socketId) {
+        setReceivedSticker({
+          path: message.stickerPath,
+          sender: message.senderNickname
+        });
+      }
     };
 
     socket.on('sticker_message', handleStickerMessage);
@@ -52,7 +51,7 @@ export const GameBoard: React.FC = () => {
     return () => {
       socket.off('sticker_message', handleStickerMessage);
     };
-  }, []);
+  }, [currentPlayer?.socketId]);
 
   const handleSendSticker = (stickerPath: string) => {
     const socket = socketService.getSocket();
@@ -123,12 +122,12 @@ export const GameBoard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {chatMessages.length > 0 && (
-        <ChatBox
-          messages={chatMessages}
-          currentPlayerSocketId={currentPlayer?.socketId}
-        />
-      )}
+      <StickerBubble
+        stickerPath={receivedSticker?.path || null}
+        senderNickname={receivedSticker?.sender || ''}
+        onClose={() => setReceivedSticker(null)}
+        autoCloseDelay={5000}
+      />
       
       <ScoreBoard
         playerName={currentPlayer?.nickname || 'You'}
