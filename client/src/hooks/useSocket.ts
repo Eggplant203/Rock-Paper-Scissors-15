@@ -132,6 +132,7 @@ export function useSocket() {
 
     socket.on('opponent_left', () => {
       setErrorMessage('Opponent left the game');
+      audioManager.play('logout', 0.5);
       
       // Return to menu but keep connection and listeners
       setTimeout(() => {
