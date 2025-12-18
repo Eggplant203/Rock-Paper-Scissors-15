@@ -42,6 +42,13 @@ export interface RoundResult {
   roundNumber: number;
 }
 
+export interface StickerMessage {
+  senderSocketId: string;
+  senderNickname: string;
+  stickerPath: string;
+  timestamp: number;
+}
+
 // Socket event types
 export interface ServerToClientEvents {
   room_joined: (data: { roomId: string; player: Player; players: Player[] }) => void;
@@ -52,6 +59,7 @@ export interface ServerToClientEvents {
   score_update: (players: Player[]) => void;
   both_ready_next_round: () => void;
   opponent_left: () => void;
+  sticker_message: (message: StickerMessage) => void;
   error: (message: string) => void;
 }
 
@@ -62,5 +70,6 @@ export interface ClientToServerEvents {
   select_option: (option: GameOption) => void;
   confirm_selection: () => void;
   ready_for_next_round: () => void;
+  send_sticker: (stickerPath: string) => void;
   leave_room: () => void;
 }

@@ -192,6 +192,25 @@ export function setupSocketHandlers(
       }
     });
 
+    // Send sticker
+    socket.on('send_sticker', (stickerPath) => {
+      const room = roomManager.findRoomBySocketId(socket.id);
+      if (!room) return;
+
+      const player = room.players.find(p => p.socketId === socket.id);
+      if (!player) return;
+
+      const message = {
+        senderSocketId: socket.id,
+        senderNickname: player.nickname,
+        stickerPath,
+        timestamp: Date.now(),
+      };
+
+      // Broadcast to all players in the room
+      io.to(room.roomId).emit('sticker_message', message);
+    });
+
     // Leave room
     socket.on('leave_room', () => {
       const room = roomManager.findRoomBySocketId(socket.id);
