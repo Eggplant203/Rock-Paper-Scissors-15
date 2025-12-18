@@ -15,6 +15,7 @@ export function useSocket() {
     setRoundResult,
     setErrorMessage,
     setConfirmed,
+    setSelectedOption,
     resetGame,
   } = useGameStore();
 
@@ -45,6 +46,21 @@ export function useSocket() {
 
     socket.on('player_update', (players) => {
       updatePlayers(players);
+      
+      // Sync local UI state with server player state
+      const { currentPlayer, selectedOption, isConfirmed } = useGameStore.getState();
+      if (currentPlayer) {
+        const serverPlayer = players.find(p => p.socketId === currentPlayer.socketId);
+        if (serverPlayer) {
+          // If server reset player state, sync local state
+          if (serverPlayer.selectedOption === null && selectedOption !== null) {
+            setSelectedOption(null);
+          }
+          if (serverPlayer.isConfirmed === false && isConfirmed === true) {
+            setConfirmed(false);
+          }
+        }
+      }
       
       // Update game state based on players
       // Get current state from store instead of closure
@@ -127,6 +143,7 @@ export function useSocket() {
       setRoundResult(null);
       setGameState('SELECTING');
       setConfirmed(false);
+      setSelectedOption(null);
       audioManager.play('click');
     });
 

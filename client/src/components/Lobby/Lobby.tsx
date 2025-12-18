@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { socketService } from '../../services/socket';
 import { generateRandomNickname } from '../../utils/nickname';
@@ -6,12 +6,23 @@ import { audioManager } from '../../utils/audio';
 import { HelpButton } from '../HelpButton/HelpButton';
 import './Lobby.scss';
 
+const NICKNAME_STORAGE_KEY = 'rps15_nickname';
+
 export const Lobby: React.FC = () => {
-  const [nickname, setNickname] = useState(generateRandomNickname());
+  const [nickname, setNickname] = useState(() => {
+    // Load nickname from localStorage or generate new one
+    const saved = localStorage.getItem(NICKNAME_STORAGE_KEY);
+    return saved || generateRandomNickname();
+  });
   const [roomCode, setRoomCode] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Save nickname to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(NICKNAME_STORAGE_KEY, nickname);
+  }, [nickname]);
 
   const handleCreateRoom = () => {
     setIsCreating(true);
